@@ -108,5 +108,5 @@ pom.xml是Maven项目的配置文件
 
 [Apache Official docs of Settings Reference](http://maven.apache.org/settings.html)
 
-[Apache Official docs of Settings Reference](http://maven.apache.org/pom.html)
+[Apache Official docs of POM Reference](http://maven.apache.org/pom.html)
 
