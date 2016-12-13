@@ -46,33 +46,33 @@ pom.xml
   <build/>
 </project>
 ```
-因为这个配置文件是Maven的核心，因此有必要详细解读一下pom.xml，来先看一下上面的几个：
+因为这个配置文件是Maven的核心，因此有必要详细解读一下pom.xml，来先看一下上面的几个
 
-- modelVersion
+- modelVersion:
   指定了当前Maven模型的版本号，对于Maven2和Maven3来说，它只能是4.0.0
   
-- groupId
+- groupId: 
   顾名思义，这个应该是公司名或是组织名。一般来说groupId是由三个部分组成，每个部分之间以"."分隔，第一部分是项目用途，比如用于商业的就是"com"，用于非营利性组织的就　　是"org"；第二部分是公司名，比如"tengxun"、"baidu"、"alibaba"；第三部分是你的项目名
   
-- artifactId
+- artifactId: 
   可以认为是Maven构建的项目名，比如你的项目中有子项目，就可以使用"项目名-子项目名"的命名方式
   
-- version
-  版本号，SNAPSHOT意为快照，说明该项目还在开发中，是不稳定的版本。在Maven中很重要的一点是，***groupId、artifactId、version三个元素生成了一个Maven项目的基本坐标***，这非常重要，我在使用和研究Maven的时候多次感受到了这点。
+- version: 
+  版本号，SNAPSHOT意为快照，说明该项目还在开发中，是不稳定的版本。在Maven中很重要的一点是，**groupId、artifactId、version三个元素生成了一个Maven项目的基本坐标**，这非常重要，我在使用和研究Maven的时候多次感受到了这点。
 
-在上面的这些元素之外，还有一些元素，同样罗列一下：
+在上面的这些元素之外，还有一些元素，同样罗列一下
 
-- packing
+- packing: 
   项目打包的类型，可以使jar、war、rar、ear、pom，默认是jar
   
-- dependencies 和dependency
+- dependencies 和dependency: 
   前者包含后者。前面说了，Maven的一个重要作用就是统一管理jar包，为了一个项目可以build或运行，项目中不可避免的，会依赖很多其他的jar包，在Maven中，这些依赖就被称为dependency。
 
-　　说到这里，就有一个本地仓库和远程仓库的概念了。官方下载的本地仓库的配置在"%MAVEN_HOME%\conf\settings.xml"里面，找一下"localRepository"就可以了；MyEclipse默认的本地仓库的地址在"{user.home}/.m2/repository"路径下，同样找一下"localRepository"就可以找到MyEclipse默认的本地仓库了。
+　说到这里，就有一个本地仓库和远程仓库的概念了。官方下载的本地仓库的配置在"%MAVEN_HOME%\conf\settings.xml"里面，找一下"localRepository"就可以了；MyEclipse默认的本地仓库的地址在"{user.home}/.m2/repository"路径下，同样找一下"localRepository"就可以找到MyEclipse默认的本地仓库了。
 
-　　本地仓库和远程仓库是这样的，***Maven工程首先会从本地仓库中获取jar包，当无法获取指定jar包时，本地仓库会从远程仓库（中央仓库）中下载jar包，并放入本地仓库以备将来使用。***
+　本地仓库和远程仓库是这样的，**Maven工程首先会从本地仓库中获取jar包，当无法获取指定jar包时，本地仓库会从远程仓库（中央仓库）中下载jar包，并放入本地仓库以备将来使用。**
 
-　　举个例子，比方说我的项目中用到了MyBatis，那么可以这么配置：
+　举个例子，比方说我的项目中用到了MyBatis，那么可以这么配置：
   ```
   <dependencies>
     <dependency>
@@ -84,10 +84,10 @@ pom.xml
 ```
 之前有说过groupId、artifactId、version唯一标识一个Maven项目，有了这三个元素，我们就可以去远程仓库下载MyBatis3.2.5.jar到本地仓库了。回想我们之前的做法，如果要MyBatis的jar包，发现没有，然后去网上下载一个，需要另外的jar包，然后去网上下载一个，但是有了Maven，就方便多了，只需要配置jar包对应的dependency依赖，Maven会自动帮助我们去远程仓库中下载jar包到本地仓库中。
 
-- properties
+- properties:
   properties是用来定义一些配置属性的，例如project.build.sourceEncoding（项目构建源码编码方式），可以设置为UTF-8，防止中文乱码，也可定义相关构建版本号，便于日后统一升级。
   
-- build
+- build:
   build表示与构建相关的配置，比如build下有finalName，表示的就是最终构建之后的名称。
   
 ## Maven工程目录结构
