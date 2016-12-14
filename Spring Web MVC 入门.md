@@ -43,18 +43,29 @@ Spring Web MVC框架也是一个基于请求驱动的Web框架，并且也使用
 
 具体执行步骤如下：
 1、  首先用户发送请求————>前端控制器，前端控制器根据请求信息（如URL）来决定选择哪一个页面控制器进行处理并把请求委托给它，即以前的控制器的控制逻辑部分；图2-1中的1、2步骤；
+
 2、  页面控制器接收到请求后，进行功能处理，首先需要收集和绑定请求参数到一个对象，这个对象在Spring Web MVC中叫命令对象，并进行验证，然后将命令对象委托给业务对象进行处理；处理完毕后返回一个ModelAndView（模型数据和逻辑视图名）；图2-1中的3、4、5步骤；
+
 3、  前端控制器收回控制权，然后根据返回的逻辑视图名，选择相应的视图进行渲染，并把模型数据传入以便视图渲染；图2-1中的步骤6、7；
+
 4、  前端控制器再次收回控制权，将响应返回给用户，图2-1中的步骤8；至此整个结束。
+
  
 问题：
 1、  请求如何给前端控制器？
+
 2、  前端控制器如何根据请求信息选择页面控制器进行功能处理？
+
 3、  如何支持多种页面控制器呢？
+
 4、  如何页面控制器如何使用业务对象？
+
 5、  页面控制器如何返回模型数据？
+
 6、  前端控制器如何根据页面控制器返回的逻辑视图名选择具体的视图进行渲染？
+
 7、  不同的视图技术如何使用相应的模型数据？
+
  
 首先我们知道有如上问题，那这些问题如何解决呢？请让我们先继续，在后边依次回答。
  
@@ -159,12 +170,19 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 核心架构的具体流程步骤如下：
 1、  首先用户发送请求——>DispatcherServlet，前端控制器收到请求后自己不进行处理，而是委托给其他的解析器进行处理，作为统一访问点，进行全局的流程控制；
+
 2、  DispatcherServlet——>HandlerMapping， HandlerMapping将会把请求映射为HandlerExecutionChain对象（包含一个Handler处理器（页面控制器）对象、多个HandlerInterceptor拦截器）对象，通过这种策略模式，很容易添加新的映射策略；
+
 3、  DispatcherServlet——>HandlerAdapter，HandlerAdapter将会把处理器包装为适配器，从而支持多种类型的处理器，即适配器设计模式的应用，从而很容易支持很多类型的处理器；
+
 4、  HandlerAdapter——>处理器功能处理方法的调用，HandlerAdapter将会根据适配的结果调用真正的处理器的功能处理方法，完成功能处理；并返回一个ModelAndView对象（包含模型数据、逻辑视图名）；
+
 5、  ModelAndView的逻辑视图名——> ViewResolver， ViewResolver将把逻辑视图名解析为具体的View，通过这种策略模式，很容易更换其他视图技术；
+
 6、  View——>渲染，View会根据传进来的Model模型数据进行渲染，此处的Model实际是一个Map数据结构，因此很容易支持其他视图技术；
+
 7、返回控制权给DispatcherServlet，由DispatcherServlet返回响应给用户，到此一个流程结束。
+
  
 此处我们只是讲了核心流程，没有考虑拦截器、本地解析、文件上传解析等，后边再细述。
  
@@ -172,33 +190,54 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
  
  
 1、  请求如何给前端控制器？这个应该在web.xml中进行部署描述，在HelloWorld中详细讲解。
+
 2、  前端控制器如何根据请求信息选择页面控制器进行功能处理？ 我们需要配置HandlerMapping进行映射
+
 3、  如何支持多种页面控制器呢？配置HandlerAdapter从而支持多种类型的页面控制器
+
 4、  如何页面控制器如何使用业务对象？可以预料到，肯定利用Spring IoC容器的依赖注入功能
+
 5、  页面控制器如何返回模型数据？使用ModelAndView返回
+
 6、  前端控制器如何根据页面控制器返回的逻辑视图名选择具体的视图进行渲染？ 使用ViewResolver进行解析
+
 7、  不同的视图技术如何使用相应的模型数据？ 因为Model是一个Map数据结构，很容易支持其他视图技术
  
 在此我们可以看出具体的核心开发步骤：
 1、  DispatcherServlet在web.xml中的部署描述，从而拦截请求到Spring Web MVC
+
 2、  HandlerMapping的配置，从而将请求映射到处理器
+
 3、  HandlerAdapter的配置，从而支持多种类型的处理器
+
 4、  ViewResolver的配置，从而将逻辑视图名解析为具体视图技术
+
 5、处理器（页面控制器）的配置，从而进行功能处理
+
  
 上边的开发步骤我们会在Hello World中详细验证。
  
 ## 2．4、Spring Web MVC优势
 1、清晰的角色划分：前端控制器（DispatcherServlet）、请求到处理器映射（HandlerMapping）、处理器适配器（HandlerAdapter）、视图解析器（ViewResolver）、处理器或页面控制器（Controller）、验证器（   Validator）、命令对象（Command  请求参数绑定到的对象就叫命令对象）、表单对象（Form Object 提供给表单展示和提交到的对象就叫表单对象）。
+
 2、分工明确，而且扩展点相当灵活，可以很容易扩展，虽然几乎不需要；
+
 3、由于命令对象就是一个POJO，无需继承框架特定API，可以使用命令对象直接作为业务对象；
+
 4、和Spring 其他框架无缝集成，是其它Web框架所不具备的；
+
 5、可适配，通过HandlerAdapter可以支持任意的类作为处理器；
+
 6、可定制性，HandlerMapping、ViewResolver等能够非常简单的定制；
+
 7、功能强大的数据验证、格式化、绑定机制；
+
 8、利用Spring提供的Mock对象能够非常简单的进行Web层单元测试；
+
 9、本地化、主题的解析的支持，使我们更容易进行国际化和主题的切换。
+
 10、强大的JSP标签库，使JSP编写更容易。
+
 ………………还有比如RESTful风格的支持、简单的文件上传、约定大于配置的契约式编程支持、基于注解的零配置支持等等。
  
 到此我们已经简单的了解了Spring Web MVC，接下来让我们来个实例来具体使用下这个框架。
@@ -207,13 +246,19 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 ### 2.5.1、准备开发环境和运行环境：
 ☆开发工具：eclipse
+
 ☆运行环境：tomcat6.0.20
+
 ☆工程：动态web工程（springmvc-chapter2）
+
 ☆spring框架下载：
+
 spring-framework-3.1.1.RELEASE-with-docs.zip
 ☆依赖jar包：
+
 1、  Spring框架jar包：
 为了简单，将spring-framework-3.1.1.RELEASE-with-docs.zip/dist/下的所有jar包拷贝到项目的WEB-INF/lib目录下；
+
 2、  Spring框架依赖的jar包：
 需要添加Apache commons logging日志，此处使用的是commons.logging-1.1.1.jar；
 需要添加jstl标签库支持，此处使用的是jstl-1.1.2.jar和standard-1.1.2.jar；
