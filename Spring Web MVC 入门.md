@@ -325,6 +325,9 @@ ${message}：表示显示由HelloWorldController处理器传过来的模型数�
  
 ### 2.5.7、运行流程分析
 
+![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC_3.JPG)
+
+
 运行步骤：
 1、  首先用户发送请求http://localhost:9080/springmvc-chapter2/hello——>web容器，web容器根据“/hello”路径映射到DispatcherServlet（url-pattern为/）进行处理；
 
