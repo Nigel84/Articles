@@ -149,3 +149,6 @@ Model2架构其实可以认为就是我们所说的Web MVC模型，只是控制�
        尽量少使用框架特定API，保证容易测试。
  
 到此我们了解Web MVC的发展历程，接下来让我们了解下Spring MVC到底是什么、架构及来个HelloWorld了解下具体怎么使用吧。
+
+
+诚挚感谢：http://sishuok.com/forum/blogPost/list/5050.html
