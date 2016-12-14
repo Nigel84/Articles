@@ -96,18 +96,26 @@ Model2架构其实可以认为就是我们所说的Web MVC模型，只是控制�
 
 从Model2架构可以看出，视图和模型分离了，控制逻辑和展示逻辑分离了。
 但我们也看到严重的缺点：
+
 1．  1、控制器：
+
 1．1．1、控制逻辑可能比较复杂，其实我们可以按照规约，如请求参数submitFlag=toAdd，我们其实可以直接调用toAdd方法，来简化控制逻辑；而且每个模块基本需要一个控制器，造成控制逻辑可能很复杂；
+
 1．1．2、请求参数到模型的封装比较麻烦，如果能交给框架来做这件事情，我们可以从中得到解放；
+
 1．1．3、选择下一个视图，严重依赖Servlet API，这样很难或基本不可能更换视图；
+
 1．1．4、给视图传输要展示的模型数据，使用Servlet API，更换视图技术也要一起更换，很麻烦。
+
  
 1.2、模型：
+
 1．2．1、此处模型使用JavaBean，可能造成JavaBean组件类很庞大，一般现在项目都是采用三层架构，而不采用JavaBean。
 
 ![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC14.JPG)
 
 1.3、视图
+
 1．3．1、现在被绑定在JSP，很难更换视图，比如Velocity、FreeMarker；比如我要支持Excel、PDF视图等等。
  
 1.4.5、服务到工作者：Front Controller + Application Controller + Page Controller + Context
