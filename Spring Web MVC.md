@@ -93,3 +93,51 @@ Model2架构其实可以认为就是我们所说的Web MVC模型，只是控制�
 ![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC11.JPG)
 ![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC12.JPG)
 ![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC13.JPG)
+
+从Model2架构可以看出，视图和模型分离了，控制逻辑和展示逻辑分离了。
+但我们也看到严重的缺点：
+1．  1、控制器：
+1．1．1、控制逻辑可能比较复杂，其实我们可以按照规约，如请求参数submitFlag=toAdd，我们其实可以直接调用toAdd方法，来简化控制逻辑；而且每个模块基本需要一个控制器，造成控制逻辑可能很复杂；
+1．1．2、请求参数到模型的封装比较麻烦，如果能交给框架来做这件事情，我们可以从中得到解放；
+1．1．3、选择下一个视图，严重依赖Servlet API，这样很难或基本不可能更换视图；
+1．1．4、给视图传输要展示的模型数据，使用Servlet API，更换视图技术也要一起更换，很麻烦。
+ 
+1.2、模型：
+1．2．1、此处模型使用JavaBean，可能造成JavaBean组件类很庞大，一般现在项目都是采用三层架构，而不采用JavaBean。
+
+![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC14.JPG)
+
+1.3、视图
+1．3．1、现在被绑定在JSP，很难更换视图，比如Velocity、FreeMarker；比如我要支持Excel、PDF视图等等。
+ 
+1.4.5、服务到工作者：Front Controller + Application Controller + Page Controller + Context
+即，前端控制器+应用控制器+页面控制器（也有称其为动作）+上下文，也是Web MVC，只是责任更加明确，详情请参考《核心J2EE设计模式》和《企业应用架构模式》如图1-10：
+
+![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC15.JPG)
+
+运行流程如下：
+
+![](https://raw.githubusercontent.com/Nigel84/Articles/MarkDown-Pictures/Spring%20Web%20MVC16.JPG)
+
+职责：
+**Front Controller：**前端控制器，负责为表现层提供统一访问点，从而避免Model2中出现的重复的控制逻辑（由前端控制器统一回调相应的功能方法，如前边的根据submitFlag=login转调login方法）；并且可以为多个请求提供共用的逻辑（如准备上下文等等），将选择具体视图和具体的功能处理（如login里边封装请求参数到模型，并调用业务逻辑对象）分离。
+ 
+**Application Controller：**应用控制器，前端控制器分离选择具体视图和具体的功能处理之后，需要有人来管理，应用控制器就是用来选择具体视图技术（视图的管理）和具体的功能处理（页面控制器/命令对象/动作管理），一种策略设计模式的应用，可以很容易的切换视图/页面控制器，相互不产生影响。
+ 
+**Page Controller(Command)：**页面控制器/动作/处理器：功能处理代码，收集参数、封装参数到模型，转调业务对象处理模型，返回逻辑视图名交给前端控制器（和具体的视图技术解耦），由前端控制器委托给应用控制器选择具体的视图来展示，可以是命令设计模式的实现。页面控制器也被称为处理器或动作。
+ 
+**Context：**上下文，还记得Model2中为视图准备要展示的模型数据吗，我们直接放在request中（Servlet API相关），有了上下文之后，我们就可以将相关数据放置在上下文，从而与协议无关（如Servlet API）的访问/设置模型数据，一般通过ThreadLocal模式实现。
+ 
+ 
+到此，我们回顾了整个web开发架构的发展历程，可能不同的web层框架在细节处理方面不同，但的目的是一样的：
+干净的web表现层：
+    模型和视图的分离；
+控制器中的控制逻辑与功能处理分离（收集并封装参数到模型对象、业务对象调用）；
+控制器中的视图选择与具体视图技术分离。
+轻薄的web表现层：
+    做的事情越少越好，薄薄的，不应该包含无关代码；
+       只负责收集并组织参数到模型对象，启动业务对象的调用；
+       控制器只返回逻辑视图名并由相应的应用控制器来选择具体使用的视图策略；
+       尽量少使用框架特定API，保证容易测试。
+ 
+到此我们了解Web MVC的发展历程，接下来让我们了解下Spring MVC到底是什么、架构及来个HelloWorld了解下具体怎么使用吧。
